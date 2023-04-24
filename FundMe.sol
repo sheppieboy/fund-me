@@ -5,9 +5,11 @@ pragma solidity ^0.8.7;
 //Withdraw fund
 //Set minimum funding value in USD
 
-import "./PriceConverter.sol"
+import "./PriceConverter.sol";
 
 contract FundMe {
+
+    using PriceConverter for uint256;
 
     uint256 public min_usd = 50 * 1e18;
 
@@ -18,7 +20,8 @@ contract FundMe {
     function fund() public payable {
         //want to be able to set a mininium fund amount in USD
         //1. How do we send ETH to this contract
-        require(getConversionRate(msg.value) >= min_usd, "Didn't send enough");
+        
+        require(msg.value.getConversionRate() >= min_usd, "Did'nt send enough eth");
         funders.push(msg.sender);
         addressToAmountFunded[msg.sender] = msg.value;
     }
