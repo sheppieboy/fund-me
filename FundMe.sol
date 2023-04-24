@@ -37,12 +37,12 @@ interface AggregatorV3Interface {
 
 contract FundMe {
 
-    uint256 public min_usd = 50;
+    uint256 public min_usd = 50 * 1e18;
 
     function fund() public payable {
         //want to be able to set a mininium fund amount in USD
         //1. How do we send ETH to this contract
-        require(msg.value >= min_usd, "Didn't send enough");
+        require(getConversionRate(msg.value) >= min_usd, "Didn't send enough");
     }
 
     function getPrice() public view returns (uint256){
