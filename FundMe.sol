@@ -34,6 +34,7 @@ interface AggregatorV3Interface {
       uint80 answeredInRound
     );
 }
+
 contract FundMe {
 
     uint256 public min_usd = 50;
@@ -44,10 +45,14 @@ contract FundMe {
         require(msg.value >= min_usd, "Didn't send enough");
     }
 
-    function getPrice() public{
+    function getPrice() public view returns (uint256){
         //ABI
         //Address 0x694AA1769357215DE4FAC081bf1f309aDC325306
+        AggregatorV3Interface priceFeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
 
+        (, int256 price,,,) = priceFeed.latestRoundData();
+
+        return uint256(price * 1e10);
     }
 
     // function getConversionRate() public {}
