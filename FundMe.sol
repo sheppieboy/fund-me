@@ -64,4 +64,15 @@ contract FundMe {
         }
         _;
     }
+
+    //someone sends eth without calling fund function
+    //recieve 
+    receive() external payable {
+        fund();
+    }
+
+    //fallback
+    fallback() external payable {
+        fund();
+    }
 }
