@@ -7,26 +7,28 @@ pragma solidity ^0.8.7;
 
 import "./PriceConverter.sol";
 
+error NotOwner();
+
 contract FundMe {
 
     using PriceConverter for uint256;
 
-    uint256 public min_usd = 50 * 1e18;
+    uint256 public constant MIN_USD = 50 * 1e18;
 
     address[] public funders;
     mapping(address => uint256) public addressToAmountFunded;
 
-    address public owner;
+    address public immutable i_owner;
 
     constructor(){
-        owner = msg.sender;
+        i_owner = msg.sender;
     }
 
     function fund() public payable {
         //want to be able to set a mininium fund amount in USD
         //1. How do we send ETH to this contract
         
-        require(msg.value.getConversionRate() >= min_usd, "Did'nt send enough eth");
+        require(msg.value.getConversionRate() >= MIN_USD, "Did'nt send enough eth");
         funders.push(msg.sender);
         addressToAmountFunded[msg.sender] = msg.value;
     }
@@ -57,7 +59,9 @@ contract FundMe {
     }
 
     modifier onlyOwner {
-        require(msg.sender == owner, "Sender is no owner!");
+        if(msg.sender != i_owner){
+            revert NotOwner();
+        }
         _;
     }
 }
